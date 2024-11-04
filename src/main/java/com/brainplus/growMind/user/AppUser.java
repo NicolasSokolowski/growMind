@@ -1,5 +1,6 @@
 package com.brainplus.growMind.user;
 
+import com.brainplus.growMind.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,52 +22,33 @@ import java.util.List;
 public class AppUser implements UserDetails {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name="id")
   private Integer id;
 
+  @Column(name="first_name")
   private String firstName;
 
+  @Column(name="last_name")
   private String lastName;
 
+  @Column(name="email")
   private String email;
 
+  @Column(name="password")
   private String password;
 
-  @Enumerated(EnumType.STRING)
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name= "role_id", nullable = true)
   private Role role;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(role.name()));
-  }
-
-  @Override
-  public String getPassword() {
-    return password;
+    return List.of(new SimpleGrantedAuthority(role.getName()));
   }
 
   @Override
   public String getUsername() {
     return email;
-  }
-
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
-
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return true;
   }
 }
