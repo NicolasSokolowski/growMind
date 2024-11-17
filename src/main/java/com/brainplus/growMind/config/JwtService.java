@@ -19,6 +19,16 @@ public class JwtService {
 
   private static final String SECRET_KEY = "lkcbMwxtxBP0WXwKu/599OfIBZD6F4zze3LjmEXp5rSdGhycwu2rYie9MAByWrOL2Kw4lW8gK1I8o4430DUWk1LqiyPzEOeLk1lc5AQCvNh9QInla932mka5KAh0anrAwuJlU+aPUKo+jzHSUKc33OYMVBAO0xNroFq1GcM8KM38ifMGLlOyoYpTuOLkjpBa+FEG0Cakc+DpLh1Eqbb/lV9xb0/9K3lpijv2SfBpqOAp2JYOnbzVEmj7KdsS83XsXoR8SdPrGY9OL0ME3noX4F7isQmXrcpZFqrPwdYxe2Y6Q80kjjx6rDQSddieiKre9jejOtIIiqEvW652wQbG9Fpi5NuFiZ8GWi6hNbEBsB8=\n";
 
+  public int extractUserIdFromToken(String token) {
+    final Claims claims = extractAllClaims(token);
+    Integer userId = claims.get("userId", Integer.class);
+    if (userId == null) {
+      throw new IllegalArgumentException("User ID is missing from the token");
+    }
+    return userId;
+  }
+
+
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
   }
@@ -28,14 +38,17 @@ public class JwtService {
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
+  public String generateToken(UserDetails userDetails, int userId) {
+    return generateToken(new HashMap<>(), userDetails, userId);
   }
 
   public String generateToken(
       Map<String, Object> extraClaims,
-      UserDetails userDetails
+      UserDetails userDetails,
+      int userId
   ) {
+    extraClaims.put("userId", userId);
+
     return Jwts
         .builder()
         .setClaims(extraClaims)

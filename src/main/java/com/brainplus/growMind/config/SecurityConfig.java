@@ -29,7 +29,7 @@ public class SecurityConfig {
     JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
 
     jdbcUserDetailsManager.setUsersByUsernameQuery(
-        "SELECT user_id, pw, active FROM members WHERE user_id=?"
+        "SELECT user_id, pw, active FROM _user WHERE user_id=?"
     );
 
     jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
@@ -46,7 +46,7 @@ public class SecurityConfig {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auths -> auths
-          .requestMatchers("/api/v1/auth/**")
+          .requestMatchers("/api/auth/**")
           .permitAll()
           .anyRequest()
           .authenticated()
