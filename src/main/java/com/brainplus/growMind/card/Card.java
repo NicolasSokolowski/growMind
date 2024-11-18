@@ -1,6 +1,7 @@
 package com.brainplus.growMind.card;
 
 import com.brainplus.growMind.deck.Deck;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +47,7 @@ public class Card {
       joinColumns = @JoinColumn(name="card_id"),
       inverseJoinColumns = @JoinColumn(name="deck_id")
   )
+  @JsonIgnore()
   private List<Deck> decks;
 
   @Column(name="updated_at")
