@@ -10,15 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class CardServiceImpl implements CardService {
 
   private final CardRepository cardRepository;
   private final DeckRepository deckRepository;
 
+  public CardServiceImpl(CardRepository cardRepository, DeckRepository deckRepository) {
+    this.cardRepository = cardRepository;
+    this.deckRepository = deckRepository;
+  }
+
   @Override
   @Transactional
-  public CardCreationResponse createCard(CardCreationRequest request) {
+  public CardCreationResponse createCardAndAddToDecks(CardCreationRequest request) {
     Card card = Card.builder()
         .frontSide(request.getFrontSide())
         .backSide((request.getBackSide()))
