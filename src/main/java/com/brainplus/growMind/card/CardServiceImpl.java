@@ -40,4 +40,17 @@ public class CardServiceImpl implements CardService {
 
     return new CardCreationResponse(card);
   }
+
+  @Override
+  @Transactional
+  public CardUpdateResponse updateCard(int cardId, CardUpdateRequest request) {
+    Card card = cardRepository.findById(cardId)
+        .orElseThrow(() -> new RuntimeException("Card not found"));
+
+    card.setFrontSide(request.getFrontSide());
+    card.setBackSide(request.getBackSide());
+    cardRepository.save(card);
+
+    return new CardUpdateResponse(card);
+  }
 }
