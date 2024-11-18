@@ -5,13 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardCreationRequest {
 
-  private String front_side;
-  private String back_side;
+  private String frontSide;
+  private String backSide;
+  private List<Integer> deckIds;
 
 }
