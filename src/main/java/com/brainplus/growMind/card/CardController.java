@@ -18,7 +18,7 @@ public class CardController {
   private final DeckRepository deckRepository;
   private final JwtService jwtService;
 
-  @PostMapping("/")
+  @PostMapping
   public ResponseEntity<CardCreationResponse> createCardAndAddToDecks(
       @RequestBody CardCreationRequest request,
       @RequestHeader("Authorization") String token
