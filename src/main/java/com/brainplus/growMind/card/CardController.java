@@ -1,10 +1,10 @@
 package com.brainplus.growMind.card;
 
 import com.brainplus.growMind.config.JwtService;
-import com.brainplus.growMind.deck.Deck;
 import com.brainplus.growMind.deck.DeckRepository;
 import com.brainplus.growMind.user.AppUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,5 +58,26 @@ public class CardController {
     }
 
     return ResponseEntity.ok(cardService.updateCard(cardId, request));
+  }
+
+  @DeleteMapping("/{cardId}")
+  public ResponseEntity<Void> deleteCard(
+      @PathVariable int cardId,
+      @RequestHeader("Authorization") String token
+  ) {
+    int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
+
+    Card card = cardRepository.findById(cardId)
+        .orElseThrow(() -> new RuntimeException("Card not found"));
+
+    int userId = card.getDecks().getFirst().getUserId().getId();
+
+    if (authenticatedUserId != userId) {
+      throw new RuntimeException("Not Authorized.");
+    }
+
+    cardService.deleteCard(cardId);
+
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

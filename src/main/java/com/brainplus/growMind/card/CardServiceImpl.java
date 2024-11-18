@@ -53,4 +53,10 @@ public class CardServiceImpl implements CardService {
 
     return new CardUpdateResponse(card);
   }
+
+  @Override
+  @Transactional
+  public void deleteCard(int cardId) {
+    cardRepository.deleteById(cardId);
+  }
 }
