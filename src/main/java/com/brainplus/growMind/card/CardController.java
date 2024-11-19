@@ -51,7 +51,7 @@ public class CardController {
     Card card = cardRepository.findById(cardId)
         .orElseThrow(() -> new RuntimeException("Card not found"));
 
-    int userId = card.getDecks().getFirst().getUserId().getId();
+    int userId = card.getDeck().getUserId().getId();
 
     if (authenticatedUserId != userId) {
       throw new RuntimeException("Not Authorized.");
@@ -70,7 +70,7 @@ public class CardController {
     Card card = cardRepository.findById(cardId)
         .orElseThrow(() -> new RuntimeException("Card not found"));
 
-    int userId = card.getDecks().getFirst().getUserId().getId();
+    int userId = card.getDeck().getUserId().getId();
 
     if (authenticatedUserId != userId) {
       throw new RuntimeException("Not Authorized.");

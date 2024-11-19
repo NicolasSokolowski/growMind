@@ -2,22 +2,18 @@ package com.brainplus.growMind.deck;
 
 import com.brainplus.growMind.user.AppUser;
 import com.brainplus.growMind.user.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class DeckServiceImpl implements DeckService {
 
   private final DeckRepository deckRepository;
   private final UserRepository userRepository;
-
-  public DeckServiceImpl(DeckRepository deckRepository, UserRepository userRepository) {
-    this.deckRepository = deckRepository;
-    this.userRepository = userRepository;
-  }
 
   @Override
   public DecksSearchResponse findDecksByUserId(int userId) {
