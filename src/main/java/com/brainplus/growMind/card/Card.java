@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
@@ -33,7 +32,7 @@ public class Card {
   @Column(name="difficulty")
   private int difficulty;
 
-  @ManyToMany(
+  @ManyToOne(
       fetch = FetchType.LAZY,
       cascade = {
           CascadeType.PERSIST,
@@ -42,13 +41,9 @@ public class Card {
           CascadeType.REFRESH
       }
   )
-  @JoinTable(
-      name="deck_card",
-      joinColumns = @JoinColumn(name="card_id"),
-      inverseJoinColumns = @JoinColumn(name="deck_id")
-  )
+  @JoinColumn(name= "deck_id", nullable = false)
   @JsonIgnore()
-  private List<Deck> decks;
+  private Deck deck;
 
   @Column(name="updated_at")
   private LocalDateTime updatedAt;
