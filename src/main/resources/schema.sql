@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP TABLE IF EXISTS "deck_card", "card", "deck", "_user", "role";
+DROP TABLE IF EXISTS "card", "deck", "_user", "role";
 
 CREATE TABLE "role" (
     "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -33,13 +33,9 @@ CREATE TABLE "card" (
     "front_side" VARCHAR(50) NOT NULL,
     "back_side" VARCHAR(50) NOT NULL,
     "difficulty" INT DEFAULT 0,
+    "deck_id" INT NOT NULL REFERENCES "deck"("id"),
     "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMP
-);
-
-CREATE TABLE "deck_card" (
-    "deck_id" INT NOT NULL REFERENCES "deck"("id"),
-    "card_id" INT NOT NULL REFERENCES "card"("id")
 );
 
 COMMIT;
