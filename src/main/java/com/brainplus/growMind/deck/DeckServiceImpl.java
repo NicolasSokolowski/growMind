@@ -3,6 +3,7 @@ package com.brainplus.growMind.deck;
 import com.brainplus.growMind.user.AppUser;
 import com.brainplus.growMind.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +26,7 @@ public class DeckServiceImpl implements DeckService {
   @Override
   public DeckSearchResponse findDeckById(int deckId) {
     Deck deck = deckRepository.findById(deckId)
-        .orElseThrow(() -> new RuntimeException("Deck not found"));
-
-
+        .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
     return new DeckSearchResponse(deck);
   }
@@ -36,7 +35,7 @@ public class DeckServiceImpl implements DeckService {
   @Transactional
   public DeckCreationResponse createDeck(DeckCreationRequest request) {
     AppUser appUser = userRepository.findById(request.getUserId())
-        .orElseThrow(() -> new RuntimeException("User not found."));
+        .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
 
     var deck = Deck.builder()
         .userId(appUser)
@@ -52,7 +51,7 @@ public class DeckServiceImpl implements DeckService {
   @Transactional
   public DeckUpdateResponse updateDeck(int deckId, DeckUpdateRequest request) {
     Deck deck = deckRepository.findById(deckId)
-        .orElseThrow(() -> new RuntimeException("Deck not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
     deck.setName(request.getName());
     deckRepository.save(deck);
