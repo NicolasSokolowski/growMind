@@ -4,10 +4,12 @@ import com.brainplus.growMind.config.JwtService;
 import com.brainplus.growMind.deck.DeckRepository;
 import com.brainplus.growMind.user.AppUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -24,16 +26,16 @@ public class CardController {
   public ResponseEntity<CardCreationResponse> createCardAndAddToDecks(
       @RequestBody CardCreationRequest request,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
     List<Integer> deckIds = request.getDeckIds();
 
     for (Integer deckId : deckIds) {
       AppUser appUser = deckRepository.findById(deckId)
-          .orElseThrow(() -> new RuntimeException("Deck not found")).getUserId();
+          .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1)).getUserId();
 
       if (authenticatedUserId != appUser.getId()) {
-        throw new RuntimeException("Not Authorized.");
+        throw new AccessDeniedException("You are not authorized to create cards for this user.");
       }
     }
 
@@ -45,16 +47,16 @@ public class CardController {
       @RequestBody CardUpdateRequest request,
       @PathVariable int cardId,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
     Card card = cardRepository.findById(cardId)
-        .orElseThrow(() -> new RuntimeException("Card not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
 
     int userId = card.getDeck().getUserId().getId();
 
     if (authenticatedUserId != userId) {
-      throw new RuntimeException("Not Authorized.");
+      throw new AccessDeniedException("You are not authorized to update cards for this user.");
     }
 
     return ResponseEntity.ok(cardService.updateCard(cardId, request));
@@ -64,16 +66,16 @@ public class CardController {
   public ResponseEntity<Void> deleteCard(
       @PathVariable int cardId,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
     Card card = cardRepository.findById(cardId)
-        .orElseThrow(() -> new RuntimeException("Card not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
 
     int userId = card.getDeck().getUserId().getId();
 
     if (authenticatedUserId != userId) {
-      throw new RuntimeException("Not Authorized.");
+      throw new AccessDeniedException("You are not authorized to delete cards for this user.");
     }
 
     cardService.deleteCard(cardId);

@@ -3,6 +3,7 @@ package com.brainplus.growMind.card;
 import com.brainplus.growMind.deck.Deck;
 import com.brainplus.growMind.deck.DeckRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class CardServiceImpl implements CardService {
     List<Integer> deckIds = request.getDeckIds();
     for (Integer deckId : deckIds) {
       Deck deck = deckRepository.findById(deckId)
-          .orElseThrow(() -> new RuntimeException("Deck not found"));
+          .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
       Card card = Card.builder()
           .frontSide(request.getFrontSide())
@@ -44,7 +45,7 @@ public class CardServiceImpl implements CardService {
   @Transactional
   public CardUpdateResponse updateCard(int cardId, CardUpdateRequest request) {
     Card card = cardRepository.findById(cardId)
-        .orElseThrow(() -> new RuntimeException("Card not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
 
     card.setFrontSide(request.getFrontSide());
     card.setBackSide(request.getBackSide());

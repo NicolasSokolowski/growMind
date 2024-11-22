@@ -4,10 +4,12 @@ import com.brainplus.growMind.config.JwtService;
 import com.brainplus.growMind.user.AppUser;
 import com.brainplus.growMind.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 @RestController
@@ -24,14 +26,14 @@ public class DeckController {
   public ResponseEntity<DecksSearchResponse> getAllDecksByUserId(
       @RequestParam(name = "userId") int userId,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
     AppUser requestedUser = userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
 
     if (authenticatedUserId != requestedUser.getId()) {
-      throw new RuntimeException("Not Authorized.");
+      throw new AccessDeniedException("You are not authorized to get a deck for this user.");
     }
 
     return ResponseEntity.ok(deckService.findDecksByUserId(userId));
@@ -41,17 +43,17 @@ public class DeckController {
   public ResponseEntity<DeckSearchResponse> getDeckById(
       @PathVariable int deckId,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
     Deck deck = deckRepository.findById(deckId)
-        .orElseThrow(() -> new RuntimeException("Deck not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
     AppUser requestedUser = userRepository.findById(deck.getUserId().getId())
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
 
     if (authenticatedUserId != requestedUser.getId()) {
-      throw new RuntimeException("Not Authorized.");
+      throw new AccessDeniedException("You are not authorized to get a deck for this user.");
     }
 
     return ResponseEntity.ok(deckService.findDeckById(deckId));
@@ -61,14 +63,14 @@ public class DeckController {
   public ResponseEntity<DeckCreationResponse> createDeck(
       @RequestBody DeckCreationRequest request,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
     AppUser requestedUser = userRepository.findById(request.getUserId())
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
 
     if (authenticatedUserId != requestedUser.getId()) {
-      throw new RuntimeException("Not Authorized.");
+      throw new AccessDeniedException("You are not authorized to create a deck for this user.");
     }
 
     return ResponseEntity.ok(deckService.createDeck(request));
@@ -79,19 +81,14 @@ public class DeckController {
       @RequestBody DeckUpdateRequest request,
       @PathVariable int deckId,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
-    Optional<Deck> foundDeck = deckRepository.findById(deckId);
+    Deck foundDeck = deckRepository.findById(deckId)
+        .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
-    if (foundDeck.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
-
-    Deck deck = foundDeck.get();
-
-    if (deck.getUserId().getId() != authenticatedUserId) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (foundDeck.getUserId().getId() != authenticatedUserId) {
+      throw new AccessDeniedException("You are not authorized to update a deck for this user.");
     }
 
     return ResponseEntity.ok(deckService.updateDeck(deckId, request));
@@ -101,19 +98,14 @@ public class DeckController {
   public ResponseEntity<Void> deleteDeck(
       @PathVariable int deckId,
       @RequestHeader("Authorization") String token
-  ) {
+  ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
-    Optional<Deck> foundDeck = deckRepository.findById(deckId);
+    Deck foundDeck = deckRepository.findById(deckId)
+        .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
-    if (foundDeck.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
-
-    Deck deck = foundDeck.get();
-
-    if (deck.getUserId().getId() != authenticatedUserId) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (foundDeck.getUserId().getId() != authenticatedUserId) {
+      throw new AccessDeniedException("You are not authorized to delete a deck for this user.");
     }
 
     deckService.deleteDeck(deckId);
