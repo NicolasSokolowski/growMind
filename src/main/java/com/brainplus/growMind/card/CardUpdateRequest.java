@@ -13,6 +13,5 @@ public class CardUpdateRequest {
 
   private String frontSide;
   private String backSide;
-  private int difficulty;
 
 }
