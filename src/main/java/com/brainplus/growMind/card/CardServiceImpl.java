@@ -94,4 +94,14 @@ public class CardServiceImpl implements CardService {
   public void deleteCard(int cardId) {
     cardRepository.deleteById(cardId);
   }
+
+  @Override
+  @Transactional
+  public void deleteCards(CardDeleteManyRequestDto request) {
+    List<Integer> cardIds = request.getIds();
+
+    for (Integer carId : cardIds) {
+      cardRepository.deleteById(carId);
+    }
+  }
 }
