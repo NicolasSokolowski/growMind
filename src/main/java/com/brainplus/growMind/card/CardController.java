@@ -1,7 +1,6 @@
 package com.brainplus.growMind.card;
 
 import com.brainplus.growMind.config.JwtService;
-import com.brainplus.growMind.deck.Deck;
 import com.brainplus.growMind.deck.DeckRepository;
 import com.brainplus.growMind.user.AppUser;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +51,31 @@ public class CardController {
     return ResponseEntity.ok(cardService.createCardAndAddToDecks(request));
   }
 
+  @PutMapping
+  public ResponseEntity<CardsResponseDto> updateManyCards(
+      @RequestBody UpdateManyCardsRequestDto request,
+      @RequestHeader("Authorization") String token
+  ) throws AccessDeniedException {
+    int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
+
+    for (Card card : request.getCards()) {
+      Integer cardId = card.getId();
+
+      Card foundCard = cardRepository.findById(cardId)
+          .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
+
+      AppUser appUser = foundCard.getDeck().getUserId();
+
+      if (authenticatedUserId != appUser.getId()) {
+        throw new AccessDeniedException("You are not authorized to update cards for this user.");
+      }
+    }
+
+    return ResponseEntity.ok(cardService.updateCards(request));
+  }
+
   @PutMapping("/{cardId}")
-  public ResponseEntity<CardUpdateResponse> createCard(
+  public ResponseEntity<CardUpdateResponse> updateCard(
       @RequestBody CardUpdateRequest request,
       @PathVariable int cardId,
       @RequestHeader("Authorization") String token
