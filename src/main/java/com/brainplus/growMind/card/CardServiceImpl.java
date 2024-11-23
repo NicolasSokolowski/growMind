@@ -62,9 +62,32 @@ public class CardServiceImpl implements CardService {
 
     card.setFrontSide(request.getFrontSide());
     card.setBackSide(request.getBackSide());
+    card.setDifficulty(request.getDifficulty());
     cardRepository.save(card);
 
     return new CardUpdateResponse(card);
+  }
+
+  @Override
+  @Transactional
+  public CardsResponseDto updateCards(UpdateManyCardsRequestDto request) {
+    List<Card> cardsToUpdate = new ArrayList<>();
+
+    for (Card card : request.getCards()) {
+      Card cardToUpdate = cardRepository.findById(card.getId())
+          .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
+
+      cardToUpdate.setFrontSide(card.getFrontSide());
+      cardToUpdate.setBackSide(card.getBackSide());
+      cardToUpdate.setDifficulty(card.getDifficulty());
+
+      cardsToUpdate.add(cardToUpdate);
+
+    }
+
+    cardRepository.saveAll(cardsToUpdate);
+
+    return new CardsResponseDto(cardsToUpdate);
   }
 
   @Override
