@@ -62,7 +62,6 @@ public class CardServiceImpl implements CardService {
 
     card.setFrontSide(request.getFrontSide());
     card.setBackSide(request.getBackSide());
-    card.setDifficulty(request.getDifficulty());
     cardRepository.save(card);
 
     return new CardUpdateResponse(card);
