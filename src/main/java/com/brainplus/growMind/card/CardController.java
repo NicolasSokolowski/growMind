@@ -74,6 +74,29 @@ public class CardController {
     return ResponseEntity.ok(cardService.updateCards(request));
   }
 
+  @DeleteMapping
+  public ResponseEntity<Void> deleteCards(
+      @RequestBody CardDeleteManyRequestDto request,
+      @RequestHeader("Authorization") String token
+  ) throws AccessDeniedException {
+    int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
+
+    for (Integer cardId : request.getIds()) {
+      Card foundCard = cardRepository.findById(cardId)
+          .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
+
+      AppUser appUser = foundCard.getDeck().getUserId();
+
+      if (authenticatedUserId != appUser.getId()) {
+        throw new AccessDeniedException("You are not authorized to update cards for this user.");
+      }
+    }
+
+    cardService.deleteCards(request);
+
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
   @PutMapping("/{cardId}")
   public ResponseEntity<CardUpdateResponse> updateCard(
       @RequestBody CardUpdateRequest request,
