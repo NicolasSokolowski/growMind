@@ -100,8 +100,8 @@ public class CardServiceImpl implements CardService {
   public void deleteCards(CardDeleteManyRequestDto request) {
     List<Integer> cardIds = request.getIds();
 
-    for (Integer carId : cardIds) {
-      cardRepository.deleteById(carId);
+    for (Integer cardId : cardIds) {
+      cardRepository.deleteById(cardId);
     }
   }
 }
