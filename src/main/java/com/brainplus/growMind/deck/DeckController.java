@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -74,6 +75,31 @@ public class DeckController {
     }
 
     return ResponseEntity.ok(deckService.createDeck(request));
+  }
+
+  @DeleteMapping
+  public ResponseEntity<Void> deleteDecks(
+      @RequestBody DeckDeleteManyRequestDto request,
+      @RequestHeader("Authorization") String token
+  ) throws AccessDeniedException {
+    int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
+
+    List<Integer> deckIds = request.getIds();
+
+    for (Integer deckId : deckIds) {
+      Deck deck = deckRepository.findById(deckId)
+          .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
+
+      AppUser appUser = deck.getUserId();
+
+      if (appUser.getId() != authenticatedUserId) {
+        throw new AccessDeniedException("You are not authorized to update a deck for this user.");
+      }
+    }
+
+    deckService.deleteDecks(request);
+
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   @PutMapping("/{deckId}")
