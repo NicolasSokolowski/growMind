@@ -7,5 +7,6 @@ public interface CardService {
   CardUpdateResponse updateCard(int cardId, CardUpdateRequest request);
   CardsResponseDto updateCards(UpdateManyCardsRequestDto request);
   void deleteCard(int cardId);
+  void deleteCards(CardDeleteManyRequestDto request);
 
 }
