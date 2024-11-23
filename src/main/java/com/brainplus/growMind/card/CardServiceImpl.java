@@ -18,6 +18,19 @@ public class CardServiceImpl implements CardService {
   private final DeckRepository deckRepository;
 
   @Override
+  public GetCardsByUserIdResponse getAllCardsByUserId(int userId) {
+    List<Card> cards = new ArrayList<>();
+    List<Deck> decks = deckRepository.findByUserId_Id(userId);
+
+    for (Deck deck : decks) {
+      List<Card> foundCards = deck.getCards();
+      cards.addAll(foundCards);
+    }
+
+    return new GetCardsByUserIdResponse(cards);
+  }
+
+  @Override
   @Transactional
   public CardCreationResponse createCardAndAddToDecks(CardCreationRequest request) {
     List<Card> createdCards = new ArrayList<>();
