@@ -1,6 +1,7 @@
 package com.brainplus.growMind.card;
 
 import com.brainplus.growMind.config.JwtService;
+import com.brainplus.growMind.deck.Deck;
 import com.brainplus.growMind.deck.DeckRepository;
 import com.brainplus.growMind.user.AppUser;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,15 @@ public class CardController {
   private final DeckRepository deckRepository;
   private final CardRepository cardRepository;
   private final JwtService jwtService;
+
+  @GetMapping
+  public ResponseEntity<GetCardsByUserIdResponse> getCardsByUserId(
+      @RequestHeader("Authorization") String token
+  ) {
+    int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
+
+    return ResponseEntity.ok(cardService.getAllCardsByUserId(authenticatedUserId));
+  }
 
   @PostMapping
   public ResponseEntity<CardCreationResponse> createCardAndAddToDecks(
