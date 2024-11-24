@@ -64,4 +64,15 @@ public class DeckServiceImpl implements DeckService {
   public void deleteDeck(int deckId) {
     deckRepository.deleteById(deckId);
   }
+
+  @Override
+  @Transactional
+  public void deleteDecks(DeckDeleteManyRequestDto request) {
+    List<Integer> deckIds = request.getIds();
+
+    for (Integer deckId : deckIds) {
+      deckRepository.deleteById(deckId);
+    }
+
+  }
 }
