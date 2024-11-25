@@ -20,23 +20,23 @@ public class DeckServiceImpl implements DeckService {
   private final ObjectsValidator validator;
 
   @Override
-  public DecksSearchResponse findDecksByUserId(int userId) {
+  public DecksSearchResponseDto findDecksByUserId(int userId) {
     List<Deck> decks = deckRepository.findByUserId_Id(userId);
 
-    return new DecksSearchResponse(decks);
+    return new DecksSearchResponseDto(decks);
   }
 
   @Override
-  public DeckSearchResponse findDeckById(int deckId) {
+  public DeckSearchResponseDto findDeckById(int deckId) {
     Deck deck = deckRepository.findById(deckId)
         .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
-    return new DeckSearchResponse(deck);
+    return new DeckSearchResponseDto(deck);
   }
 
   @Override
   @Transactional
-  public DeckCreationResponse createDeck(int userId, DeckCreationRequestDto request) {
+  public DeckCreationResponseDto createDeck(int userId, DeckCreationRequestDto request) {
     var violations = validator.validate(request);
     if (!violations.isEmpty()) {
       throw new ValidationException(violations);
@@ -52,19 +52,24 @@ public class DeckServiceImpl implements DeckService {
 
     deckRepository.save(deck);
 
-    return new DeckCreationResponse(deck);
+    return new DeckCreationResponseDto(deck);
   }
 
   @Override
   @Transactional
-  public DeckUpdateResponse updateDeck(int deckId, DeckUpdateRequest request) {
+  public DeckUpdateResponseDto updateDeck(int deckId, DeckUpdateRequestDto request) {
+    var violations = validator.validate(request);
+    if (!violations.isEmpty()) {
+      throw new ValidationException(violations);
+    }
+
     Deck deck = deckRepository.findById(deckId)
         .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));
 
     deck.setName(request.getName());
     deckRepository.save(deck);
 
-    return new DeckUpdateResponse(deck);
+    return new DeckUpdateResponseDto(deck);
   }
 
   @Override
