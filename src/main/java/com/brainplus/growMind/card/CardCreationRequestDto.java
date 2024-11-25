@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardCreationRequest {
+public class CardCreationRequestDto {
 
   @NotNull(message = "Field 'frontSide' cannot be null.")
   @NotEmpty(message = "Field 'frontSide' cannot be empty")
@@ -25,7 +25,7 @@ public class CardCreationRequest {
   @NotEmpty(message = "Field 'backSide' cannot be empty")
   @Size(min = 1, max = 50, message = "Field 'backSide' must be between 1 & 50 characters.")
   private String backSide;
-  
+
   private List<Integer> deckIds;
 
 }
