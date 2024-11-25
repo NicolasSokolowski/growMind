@@ -1,5 +1,6 @@
 package com.brainplus.growMind.card;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardUpdateResponse {
+public class CardUpdateLevelRequestDto {
 
-  private Card card;
+  @NotNull
+  private Integer id;
+
+  @NotNull
+  private Integer difficulty;
 
 }

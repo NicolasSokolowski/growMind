@@ -2,6 +2,8 @@ package com.brainplus.growMind.card;
 
 import com.brainplus.growMind.deck.Deck;
 import com.brainplus.growMind.deck.DeckRepository;
+import com.brainplus.growMind.exception.ValidationException;
+import com.brainplus.growMind.validator.ObjectsValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,10 @@ public class CardServiceImpl implements CardService {
 
   private final CardRepository cardRepository;
   private final DeckRepository deckRepository;
+  private final ObjectsValidator validator;
 
   @Override
-  public GetCardsByUserIdResponse getAllCardsByUserId(int userId) {
+  public CardsGetByUserIdResponseDto getAllCardsByUserId(int userId) {
     List<Card> cards = new ArrayList<>();
     List<Deck> decks = deckRepository.findByUserId_Id(userId);
 
@@ -27,12 +30,17 @@ public class CardServiceImpl implements CardService {
       cards.addAll(foundCards);
     }
 
-    return new GetCardsByUserIdResponse(cards);
+    return new CardsGetByUserIdResponseDto(cards);
   }
 
   @Override
   @Transactional
-  public CardCreationResponse createCardAndAddToDecks(CardCreationRequest request) {
+  public CardCreationResponseDto createCardAndAddToDecks(CardCreationRequestDto request) {
+    var violations = validator.validate(request);
+    if (!violations.isEmpty()) {
+      throw new ValidationException(violations);
+    }
+
     List<Card> createdCards = new ArrayList<>();
 
     List<Integer> deckIds = request.getDeckIds();
@@ -51,12 +59,17 @@ public class CardServiceImpl implements CardService {
 
     }
 
-    return new CardCreationResponse(createdCards);
+    return new CardCreationResponseDto(createdCards);
   }
 
   @Override
   @Transactional
-  public CardUpdateResponse updateCard(int cardId, CardUpdateRequest request) {
+  public CardUpdateResponseDto updateCard(int cardId, CardUpdateRequestDto request) {
+    var violations = validator.validate(request);
+    if (!violations.isEmpty()) {
+      throw new ValidationException(violations);
+    }
+
     Card card = cardRepository.findById(cardId)
         .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
 
@@ -64,20 +77,23 @@ public class CardServiceImpl implements CardService {
     card.setBackSide(request.getBackSide());
     cardRepository.save(card);
 
-    return new CardUpdateResponse(card);
+    return new CardUpdateResponseDto(card);
   }
 
   @Override
   @Transactional
-  public CardsResponseDto updateCards(UpdateManyCardsRequestDto request) {
+  public CardsUpdateResponseDto updateCardsLevel(CardsUpdateManyRequestDto request) {
+    var violations = validator.validate(request);
+    if (!violations.isEmpty()) {
+      throw new ValidationException(violations);
+    }
+
     List<Card> cardsToUpdate = new ArrayList<>();
 
-    for (Card card : request.getCards()) {
+    for (CardUpdateLevelRequestDto card : request.getCards()) {
       Card cardToUpdate = cardRepository.findById(card.getId())
           .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
 
-      cardToUpdate.setFrontSide(card.getFrontSide());
-      cardToUpdate.setBackSide(card.getBackSide());
       cardToUpdate.setDifficulty(card.getDifficulty());
 
       cardsToUpdate.add(cardToUpdate);
@@ -86,7 +102,7 @@ public class CardServiceImpl implements CardService {
 
     cardRepository.saveAll(cardsToUpdate);
 
-    return new CardsResponseDto(cardsToUpdate);
+    return new CardsUpdateResponseDto(cardsToUpdate);
   }
 
   @Override

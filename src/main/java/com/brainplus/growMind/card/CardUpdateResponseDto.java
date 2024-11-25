@@ -5,14 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardsResponseDto {
+public class CardUpdateResponseDto {
 
-  private List<Card> cards;
+  private Card card;
 
 }

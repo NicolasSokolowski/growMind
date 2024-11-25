@@ -1,5 +1,6 @@
 package com.brainplus.growMind.card;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +12,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardCreationRequest {
+public class CardsUpdateResponseDto {
 
-  private String frontSide;
-  private String backSide;
-  private List<Integer> deckIds;
+  private List<Card> cards;
 
 }

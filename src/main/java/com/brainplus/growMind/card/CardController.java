@@ -23,7 +23,7 @@ public class CardController {
   private final JwtService jwtService;
 
   @GetMapping
-  public ResponseEntity<GetCardsByUserIdResponse> getCardsByUserId(
+  public ResponseEntity<CardsGetByUserIdResponseDto> getCardsByUserId(
       @RequestHeader("Authorization") String token
   ) {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
@@ -32,8 +32,8 @@ public class CardController {
   }
 
   @PostMapping
-  public ResponseEntity<CardCreationResponse> createCardAndAddToDecks(
-      @RequestBody CardCreationRequest request,
+  public ResponseEntity<CardCreationResponseDto> createCardAndAddToDecks(
+      @RequestBody CardCreationRequestDto request,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
@@ -52,13 +52,13 @@ public class CardController {
   }
 
   @PutMapping
-  public ResponseEntity<CardsResponseDto> updateManyCards(
-      @RequestBody UpdateManyCardsRequestDto request,
+  public ResponseEntity<CardsUpdateResponseDto> updateCardsLevel(
+      @RequestBody CardsUpdateManyRequestDto request,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
-    for (Card card : request.getCards()) {
+    for (CardUpdateLevelRequestDto card : request.getCards()) {
       Integer cardId = card.getId();
 
       Card foundCard = cardRepository.findById(cardId)
@@ -71,7 +71,7 @@ public class CardController {
       }
     }
 
-    return ResponseEntity.ok(cardService.updateCards(request));
+    return ResponseEntity.ok(cardService.updateCardsLevel(request));
   }
 
   @DeleteMapping
@@ -98,8 +98,8 @@ public class CardController {
   }
 
   @PutMapping("/{cardId}")
-  public ResponseEntity<CardUpdateResponse> updateCard(
-      @RequestBody CardUpdateRequest request,
+  public ResponseEntity<CardUpdateResponseDto> updateCard(
+      @RequestBody CardUpdateRequestDto request,
       @PathVariable int cardId,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {

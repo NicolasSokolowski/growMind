@@ -1,5 +1,6 @@
 package com.brainplus.growMind.card;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateManyCardsRequestDto {
+public class CardsUpdateManyRequestDto {
 
-  private List<Card> cards;
+  @Valid
+  private List<CardUpdateLevelRequestDto> cards;
 
 }
