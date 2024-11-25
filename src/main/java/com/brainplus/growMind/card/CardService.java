@@ -2,10 +2,10 @@ package com.brainplus.growMind.card;
 
 public interface CardService {
 
-  GetCardsByUserIdResponse getAllCardsByUserId(int userId);
-  CardCreationResponse createCardAndAddToDecks(CardCreationRequest request);
-  CardUpdateResponse updateCard(int cardId, CardUpdateRequest request);
-  CardsResponseDto updateCards(UpdateManyCardsRequestDto request);
+  CardsGetByUserIdResponseDto getAllCardsByUserId(int userId);
+  CardCreationResponseDto createCardAndAddToDecks(CardCreationRequestDto request);
+  CardUpdateResponseDto updateCard(int cardId, CardUpdateRequestDto request);
+  CardsUpdateResponseDto updateCardsLevel(CardsUpdateManyRequestDto request);
   void deleteCard(int cardId);
   void deleteCards(CardDeleteManyRequestDto request);
 
