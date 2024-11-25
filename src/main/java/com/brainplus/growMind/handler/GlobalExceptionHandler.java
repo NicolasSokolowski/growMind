@@ -1,5 +1,6 @@
 package com.brainplus.growMind.handler;
 
+import com.brainplus.growMind.exception.ValidationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.naming.AuthenticationException;
 import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 
 @RestControllerAdvice
@@ -57,6 +61,20 @@ public class GlobalExceptionHandler {
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
         .body("Missing path variable: '" + exception.getVariableName() + "'. Please provide the required path variable");
+  }
+
+  @ExceptionHandler(ValidationException.class)
+  public ResponseEntity<Map<String, Object>> handleValidationException(ValidationException exception) {
+    logger.error("Validation errors: ", exception);
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("status", HttpStatus.BAD_REQUEST.value());
+    response.put("errors", exception.getViolations());
+    response.put("message", "Validation failed for the request");
+
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(response);
   }
 
   @ExceptionHandler(IllegalStateException.class)
