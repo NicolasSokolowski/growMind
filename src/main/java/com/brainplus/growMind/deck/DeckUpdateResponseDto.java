@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeckUpdateResponse {
+public class DeckUpdateResponseDto {
 
   private Deck deck;
 }

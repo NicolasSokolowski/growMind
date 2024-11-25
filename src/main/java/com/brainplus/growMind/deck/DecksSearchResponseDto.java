@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DecksSearchResponse {
+public class DecksSearchResponseDto {
 
   private List<Deck> decks;
 }
