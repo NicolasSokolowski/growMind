@@ -2,10 +2,11 @@ package com.brainplus.growMind.deck;
 
 public interface DeckService {
 
-  DeckCreationResponse createDeck(DeckCreationRequest request);
-  DeckUpdateResponse updateDeck(int deckId, DeckUpdateRequest request);
+  DeckCreationResponseDto createDeck(int userId, DeckCreationRequestDto request);
+  DeckUpdateResponseDto updateDeck(int deckId, DeckUpdateRequestDto request);
   void deleteDeck(int deckId);
   void deleteDecks(DeckDeleteManyRequestDto request);
-  DecksSearchResponse findDecksByUserId(int userId);
-  DeckSearchResponse findDeckById(int deckId);
+  DecksSearchResponseDto findDecksByUserId(int userId);
+  DeckSearchResponseDto findDeckById(int deckId);
+
 }

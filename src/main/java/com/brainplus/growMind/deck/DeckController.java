@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/decks")
@@ -24,7 +23,7 @@ public class DeckController {
   private final DeckRepository deckRepository;
 
   @GetMapping
-  public ResponseEntity<DecksSearchResponse> getAllDecksByUserId(
+  public ResponseEntity<DecksSearchResponseDto> getAllDecksByUserId(
       @RequestParam(name = "userId") int userId,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {
@@ -41,7 +40,7 @@ public class DeckController {
   }
 
   @GetMapping("/{deckId}")
-  public ResponseEntity<DeckSearchResponse> getDeckById(
+  public ResponseEntity<DeckSearchResponseDto> getDeckById(
       @PathVariable int deckId,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {
@@ -61,20 +60,13 @@ public class DeckController {
   }
 
   @PostMapping
-  public ResponseEntity<DeckCreationResponse> createDeck(
-      @RequestBody DeckCreationRequest request,
+  public ResponseEntity<DeckCreationResponseDto> createDeck(
+      @RequestBody DeckCreationRequestDto request,
       @RequestHeader("Authorization") String token
-  ) throws AccessDeniedException {
-    int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
+  ) {
+    int userId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
-    AppUser requestedUser = userRepository.findById(request.getUserId())
-        .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
-
-    if (authenticatedUserId != requestedUser.getId()) {
-      throw new AccessDeniedException("You are not authorized to create a deck for this user.");
-    }
-
-    return ResponseEntity.ok(deckService.createDeck(request));
+    return ResponseEntity.ok(deckService.createDeck(userId, request));
   }
 
   @DeleteMapping
@@ -103,8 +95,8 @@ public class DeckController {
   }
 
   @PutMapping("/{deckId}")
-  public ResponseEntity<DeckUpdateResponse> updateDeck(
-      @RequestBody DeckUpdateRequest request,
+  public ResponseEntity<DeckUpdateResponseDto> updateDeck(
+      @RequestBody DeckUpdateRequestDto request,
       @PathVariable int deckId,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {

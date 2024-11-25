@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeckCreationRequest {
+public class DeckCreationResponseDto {
 
-  private int userId;
-  private String name;
+  private Deck deck;
 }
