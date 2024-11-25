@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateManyCardsRequestDto {
+public class CardsUpdateManyRequestDto {
 
   @Valid
   private List<CardUpdateLevelRequestDto> cards;

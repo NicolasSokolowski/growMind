@@ -23,7 +23,7 @@ public class CardController {
   private final JwtService jwtService;
 
   @GetMapping
-  public ResponseEntity<GetCardsByUserIdResponseDto> getCardsByUserId(
+  public ResponseEntity<CardsGetByUserIdResponseDto> getCardsByUserId(
       @RequestHeader("Authorization") String token
   ) {
     int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));

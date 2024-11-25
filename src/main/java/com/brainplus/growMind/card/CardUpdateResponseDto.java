@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardUpdateResponse {
+public class CardUpdateResponseDto {
 
   private Card card;
 

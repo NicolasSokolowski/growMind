@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetCardsByUserIdResponse {
+public class CardsGetByUserIdResponseDto {
 
   private List<Card> cards;
 
