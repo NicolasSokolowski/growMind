@@ -3,7 +3,6 @@ package com.brainplus.growMind.deck;
 import com.brainplus.growMind.config.JwtService;
 import com.brainplus.growMind.user.AppUser;
 import com.brainplus.growMind.user.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ public class DeckController {
   private final DeckRepository deckRepository;
 
   @GetMapping
-  public ResponseEntity<DecksSearchResponse> getAllDecksByUserId(
+  public ResponseEntity<DecksSearchResponseDto> getAllDecksByUserId(
       @RequestParam(name = "userId") int userId,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {
@@ -41,7 +40,7 @@ public class DeckController {
   }
 
   @GetMapping("/{deckId}")
-  public ResponseEntity<DeckSearchResponse> getDeckById(
+  public ResponseEntity<DeckSearchResponseDto> getDeckById(
       @PathVariable int deckId,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {
@@ -61,7 +60,7 @@ public class DeckController {
   }
 
   @PostMapping
-  public ResponseEntity<DeckCreationResponse> createDeck(
+  public ResponseEntity<DeckCreationResponseDto> createDeck(
       @RequestBody DeckCreationRequestDto request,
       @RequestHeader("Authorization") String token
   ) {
@@ -96,8 +95,8 @@ public class DeckController {
   }
 
   @PutMapping("/{deckId}")
-  public ResponseEntity<DeckUpdateResponse> updateDeck(
-      @RequestBody DeckUpdateRequest request,
+  public ResponseEntity<DeckUpdateResponseDto> updateDeck(
+      @RequestBody DeckUpdateRequestDto request,
       @PathVariable int deckId,
       @RequestHeader("Authorization") String token
   ) throws AccessDeniedException {
