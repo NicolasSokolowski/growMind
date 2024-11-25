@@ -1,7 +1,9 @@
 package com.brainplus.growMind.deck;
 
+import com.brainplus.growMind.exception.ValidationException;
 import com.brainplus.growMind.user.AppUser;
 import com.brainplus.growMind.user.UserRepository;
+import com.brainplus.growMind.validator.ObjectsValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ public class DeckServiceImpl implements DeckService {
 
   private final DeckRepository deckRepository;
   private final UserRepository userRepository;
+  private final ObjectsValidator validator;
 
   @Override
   public DecksSearchResponse findDecksByUserId(int userId) {
@@ -33,8 +36,13 @@ public class DeckServiceImpl implements DeckService {
 
   @Override
   @Transactional
-  public DeckCreationResponse createDeck(DeckCreationRequest request) {
-    AppUser appUser = userRepository.findById(request.getUserId())
+  public DeckCreationResponse createDeck(int userId, DeckCreationRequestDto request) {
+    var violations = validator.validate(request);
+    if (!violations.isEmpty()) {
+      throw new ValidationException(violations);
+    }
+
+    AppUser appUser = userRepository.findById(userId)
         .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
 
     var deck = Deck.builder()
