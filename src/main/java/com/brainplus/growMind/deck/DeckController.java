@@ -3,6 +3,7 @@ package com.brainplus.growMind.deck;
 import com.brainplus.growMind.config.JwtService;
 import com.brainplus.growMind.user.AppUser;
 import com.brainplus.growMind.user.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/decks")
@@ -62,19 +62,12 @@ public class DeckController {
 
   @PostMapping
   public ResponseEntity<DeckCreationResponse> createDeck(
-      @RequestBody DeckCreationRequest request,
+      @RequestBody DeckCreationRequestDto request,
       @RequestHeader("Authorization") String token
-  ) throws AccessDeniedException {
-    int authenticatedUserId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
+  ) {
+    int userId = jwtService.extractUserIdFromToken(token.replace("Bearer ", ""));
 
-    AppUser requestedUser = userRepository.findById(request.getUserId())
-        .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
-
-    if (authenticatedUserId != requestedUser.getId()) {
-      throw new AccessDeniedException("You are not authorized to create a deck for this user.");
-    }
-
-    return ResponseEntity.ok(deckService.createDeck(request));
+    return ResponseEntity.ok(deckService.createDeck(userId, request));
   }
 
   @DeleteMapping
