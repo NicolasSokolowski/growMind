@@ -1,6 +1,7 @@
 package com.brainplus.growMind.user;
 
 import com.brainplus.growMind.role.Role;
+import com.brainplus.growMind.token.Token;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,9 @@ public class AppUser implements UserDetails {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name= "role_id", nullable = true)
   private Role role;
+
+  @OneToMany(mappedBy = "appUser")
+  private List<Token> tokens;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
