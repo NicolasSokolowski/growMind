@@ -15,16 +15,21 @@ import lombok.NoArgsConstructor;
 public class Token {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name="id")
   private Integer id;
 
+  @Column(name="token")
   private String token;
 
+  @Column(name="token_type")
   @Enumerated(EnumType.STRING)
   public TokenType tokenType = TokenType.BEARER;
 
+  @Column(name="expired")
   private boolean expired;
 
+  @Column(name="revoked")
   private boolean revoked;
 
   @ManyToOne(fetch = FetchType.LAZY)
