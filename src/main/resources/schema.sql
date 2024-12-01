@@ -38,4 +38,15 @@ CREATE TABLE "card" (
     "updated_at" TIMESTAMP
 );
 
+CREATE TABLE "token" (
+    "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "token" TEXT NOT NULL UNIQUE,
+    "token_type" VARCHAR(20) NOT NULL,
+    "expired" BOOLEAN NOT NULL DEFAULT FALSE,
+    "revoked" BOOLEAN NOT NULL DEFAULT FALSE,
+    "user_id" INT NOT NULL REFERENCES "_user"("id"),
+    "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMP
+);
+
 COMMIT;
