@@ -1,6 +1,7 @@
 package com.brainplus.growMind.auth;
 
 import com.brainplus.growMind.config.JwtService;
+import com.brainplus.growMind.exception.ValidationException;
 import com.brainplus.growMind.role.RoleRepository;
 import com.brainplus.growMind.token.Token;
 import com.brainplus.growMind.token.TokenRepository;
@@ -8,6 +9,7 @@ import com.brainplus.growMind.token.TokenType;
 import com.brainplus.growMind.user.AppUser;
 import com.brainplus.growMind.role.Role;
 import com.brainplus.growMind.user.UserRepository;
+import com.brainplus.growMind.validator.ObjectsValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,8 +37,14 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  private final ObjectsValidator validator;
 
   public AuthenticationResponse register(RegisterRequest request) {
+    var violations = validator.validate(request);
+    if (!violations.isEmpty()) {
+      throw new ValidationException(violations);
+    }
+
     Role defaultRole = roleRepository.findById(1)
         .orElseThrow(() -> new RuntimeException("Default role not found"));
 
@@ -58,6 +66,11 @@ public class AuthenticationService {
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    var violations = validator.validate(request);
+    if (!violations.isEmpty()) {
+      throw new ValidationException(violations);
+    }
+
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
