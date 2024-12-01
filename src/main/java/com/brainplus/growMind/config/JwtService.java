@@ -1,6 +1,7 @@
 package com.brainplus.growMind.config;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -98,12 +99,16 @@ public class JwtService {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts
-        .parserBuilder()
-        .setSigningKey(getSigninKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
+    try {
+      return Jwts
+          .parserBuilder()
+          .setSigningKey(getSigninKey())
+          .build()
+          .parseClaimsJws(token)
+          .getBody();
+    } catch (ExpiredJwtException exception) {
+      throw exception;
+    }
   }
 
   private Key getSigninKey() {
