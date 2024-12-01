@@ -18,6 +18,6 @@ application:
   security:
     jwt:
       secret-key: your_secret_key
-      expiration: 15000
+      expiration: 18000000
       refresh-token:
-        expiration: 60000
+        expiration: 172800000
