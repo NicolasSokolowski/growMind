@@ -40,10 +40,7 @@ public class AuthenticationService {
   private final ObjectsValidator validator;
 
   public AuthenticationResponse register(RegisterRequest request) {
-    var violations = validator.validate(request);
-    if (!violations.isEmpty()) {
-      throw new ValidationException(violations);
-    }
+    validator.validate(request);
 
     Role defaultRole = roleRepository.findById(1)
         .orElseThrow(() -> new RuntimeException("Default role not found"));
@@ -66,10 +63,7 @@ public class AuthenticationService {
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    var violations = validator.validate(request);
-    if (!violations.isEmpty()) {
-      throw new ValidationException(violations);
-    }
+    validator.validate(request);
 
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(

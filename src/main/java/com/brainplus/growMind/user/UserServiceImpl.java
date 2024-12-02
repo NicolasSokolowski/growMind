@@ -1,5 +1,6 @@
 package com.brainplus.growMind.user;
 
+import com.brainplus.growMind.validator.ObjectsValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
@@ -14,9 +15,11 @@ public class UserServiceImpl implements UserService {
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
+  private final ObjectsValidator validator;
 
   @Override
   public void changePassword(ChangePasswordRequestDto request, Principal connectedUser) {
+    validator.validate(request);
 
     var user = (AppUser) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
