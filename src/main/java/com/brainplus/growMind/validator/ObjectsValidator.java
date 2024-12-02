@@ -1,5 +1,6 @@
 package com.brainplus.growMind.validator;
 
+import com.brainplus.growMind.exception.ValidationException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -16,15 +17,15 @@ public class ObjectsValidator<T> {
   private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
   private final Validator validator = factory.getValidator();
 
-  public Set<String> validate(T objectToValidate) {
+  public void validate(T objectToValidate) {
     Set<ConstraintViolation<T>> violations = validator.validate(objectToValidate);
     if (!violations.isEmpty()) {
-      return violations
+      Set<String> messages = violations
           .stream()
           .map(ConstraintViolation::getMessage)
           .collect(Collectors.toSet());
-    }
 
-    return Collections.emptySet();
+      throw new ValidationException(messages);
+    }
   }
 }

@@ -37,10 +37,7 @@ public class DeckServiceImpl implements DeckService {
   @Override
   @Transactional
   public DeckCreationResponseDto createDeck(int userId, DeckCreationRequestDto request) {
-    var violations = validator.validate(request);
-    if (!violations.isEmpty()) {
-      throw new ValidationException(violations);
-    }
+    validator.validate(request);
 
     AppUser appUser = userRepository.findById(userId)
         .orElseThrow(() -> new EmptyResultDataAccessException("User not found", 1));
@@ -58,10 +55,7 @@ public class DeckServiceImpl implements DeckService {
   @Override
   @Transactional
   public DeckUpdateResponseDto updateDeck(int deckId, DeckUpdateRequestDto request) {
-    var violations = validator.validate(request);
-    if (!violations.isEmpty()) {
-      throw new ValidationException(violations);
-    }
+    validator.validate(request);
 
     Deck deck = deckRepository.findById(deckId)
         .orElseThrow(() -> new EmptyResultDataAccessException("Deck not found", 1));

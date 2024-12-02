@@ -36,10 +36,7 @@ public class CardServiceImpl implements CardService {
   @Override
   @Transactional
   public CardCreationResponseDto createCardAndAddToDecks(CardCreationRequestDto request) {
-    var violations = validator.validate(request);
-    if (!violations.isEmpty()) {
-      throw new ValidationException(violations);
-    }
+    validator.validate(request);
 
     List<Card> createdCards = new ArrayList<>();
 
@@ -65,10 +62,7 @@ public class CardServiceImpl implements CardService {
   @Override
   @Transactional
   public CardUpdateResponseDto updateCard(int cardId, CardUpdateRequestDto request) {
-    var violations = validator.validate(request);
-    if (!violations.isEmpty()) {
-      throw new ValidationException(violations);
-    }
+    validator.validate(request);
 
     Card card = cardRepository.findById(cardId)
         .orElseThrow(() -> new EmptyResultDataAccessException("Card not found", 1));
@@ -83,10 +77,7 @@ public class CardServiceImpl implements CardService {
   @Override
   @Transactional
   public CardsUpdateResponseDto updateCardsLevel(CardsUpdateManyRequestDto request) {
-    var violations = validator.validate(request);
-    if (!violations.isEmpty()) {
-      throw new ValidationException(violations);
-    }
+    validator.validate(request);
 
     List<Card> cardsToUpdate = new ArrayList<>();
 
